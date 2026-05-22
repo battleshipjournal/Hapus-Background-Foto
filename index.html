@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Background Remover Pro - GitHub Version</title>
-    
+    <title>AI Background Remover Pro - Google Drive Cloud Model</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
 </head>
 <body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col justify-between font-sans antialiased">
 
@@ -15,44 +12,39 @@
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
             <div>
                 <h1 class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent uppercase">AI Background Remover Pro</h1>
-                <p class="text-xs text-slate-400 mt-0.5">MediaPipe High-Speed Engine • Optimized for GitHub Pages</p>
+                <p class="text-xs text-slate-400 mt-0.5">Bria RMBG 1.4 • Hosted on Your Google Drive</p>
             </div>
-            <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono px-2.5 py-1 rounded-full uppercase tracking-widest animate-pulse">GitHub Live Server</span>
+            <span id="engine-status" class="text-[10px] bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono px-2.5 py-1 rounded-full uppercase tracking-widest animate-pulse">Menghubungkan ke Google Drive AI...</span>
         </div>
     </header>
 
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
         
         <div class="lg:col-span-3 space-y-6">
-            <div id="dropzone" class="border-2 border-dashed border-slate-700 bg-[#111827]/30 rounded-2xl p-12 flex flex-col items-center justify-center min-h-[450px] cursor-pointer hover:border-emerald-400 hover:bg-emerald-500/[0.02] transition-all group relative">
+            <div id="dropzone" class="border-2 border-dashed border-slate-700 bg-[#111827]/30 rounded-2xl p-12 flex flex-col items-center justify-center min-h-[450px] cursor-pointer hover:border-emerald-400 transition-all group relative">
                 <input type="file" id="file-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
-                
-                <div class="p-4 bg-slate-800/80 rounded-2xl mb-4 text-emerald-400 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-slate-900 transition-all duration-300 shadow-xl pointer-events-none">
+                <div class="p-4 bg-slate-800/80 rounded-2xl mb-4 text-emerald-400 group-hover:scale-110 transition-all shadow-xl pointer-events-none">
                     <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 </div>
                 <p class="text-xl font-bold text-slate-200 pointer-events-none">Klik di sini atau seret foto kamu</p>
-                <p class="text-xs text-slate-400 mt-2 pointer-events-none">Mendukung format JPG, PNG, WebP • Proses Instan di Browser</p>
+                <p class="text-xs text-slate-400 mt-2 pointer-events-none">Potongan rambut dijamin pro, bersih, tanpa server sewaan</p>
             </div>
 
             <div id="loading" class="hidden border border-slate-800/60 bg-[#111827]/40 rounded-2xl p-12 flex flex-col items-center justify-center min-h-[450px]">
-                <div class="relative w-20 h-20 mb-6">
-                    <div class="absolute inset-0 rounded-full border-4 border-emerald-500/10"></div>
-                    <div class="absolute inset-0 rounded-full border-4 border-emerald-400 border-t-transparent animate-spin"></div>
-                </div>
-                <p class="text-lg font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent animate-pulse">Memisahkan Latar Belakang...</p>
-                <p class="text-xs text-slate-400 mt-2 max-w-xs text-center">AI sedang memproses tepi objek secara realtime.</p>
+                <div class="w-16 h-16 mb-6 rounded-full border-4 border-emerald-400 border-t-transparent animate-spin"></div>
+                <p class="text-lg font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent animate-pulse">AI Pintar Sedang Memotong Gambar...</p>
+                <p id="loading-text" class="text-xs text-slate-400 mt-2 text-center max-w-xs">Mengekstrak setiap helai rambut secara detail & presisi.</p>
             </div>
 
             <div id="preview-container" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-[#111827]/40 border border-slate-800 rounded-2xl p-4 flex flex-col shadow-2xl">
-                    <span class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-slate-500 rounded-full"></span> Foto Asli</span>
+                    <span class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">Foto Asli</span>
                     <div class="flex-1 min-h-[350px] max-h-[500px] bg-[#090d16] rounded-xl flex items-center justify-center p-2 overflow-hidden">
                         <img id="img-original" class="max-w-full max-h-full object-contain rounded-lg">
                     </div>
                 </div>
                 <div class="bg-[#111827]/40 border border-slate-800 rounded-2xl p-4 flex flex-col shadow-2xl">
-                    <span class="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span> Hasil Transparan</span>
-                    <canvas id="canvas-proses" class="hidden"></canvas>
+                    <span class="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-widest">Hasil Ultra Clean</span>
                     <div class="flex-1 min-h-[350px] max-h-[500px] bg-[#090d16] rounded-xl flex items-center justify-center p-2 overflow-hidden relative checkerboard">
                         <canvas id="canvas-output" class="max-w-full max-h-full object-contain"></canvas>
                     </div>
@@ -61,36 +53,12 @@
         </div>
 
         <div id="sidebar-controls" class="bg-[#111827]/50 border border-slate-800 rounded-2xl p-6 space-y-6 opacity-30 pointer-events-none transition-all duration-300 shadow-2xl sticky top-24">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xs font-black tracking-widest text-slate-400 uppercase">Refine Edge Engine</h2>
-                <span class="text-[10px] bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded font-mono">Realtime</span>
-            </div>
-            
-            <div class="space-y-2">
-                <div class="flex justify-between text-xs font-bold">
-                    <label for="range-feather" class="text-slate-300">Feather (Kelembutan Tepi)</label>
-                    <span id="val-feather" class="text-emerald-400 font-mono">0px</span>
-                </div>
-                <input type="range" id="range-feather" min="0" max="15" value="0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none accent-emerald-400 cursor-pointer">
-                <p class="text-[10px] text-slate-500">Menghaluskan pinggiran objek agar tidak kaku/gerigi.</p>
-            </div>
-
-            <div class="space-y-2">
-                <div class="flex justify-between text-xs font-bold">
-                    <label for="range-contrast" class="text-slate-300">Contrast Tepi (Kikis Merah)</label>
-                    <span id="val-contrast" class="text-emerald-400 font-mono">1.0x</span>
-                </div>
-                <input type="range" id="range-contrast" min="0.5" max="3.0" step="0.1" value="1.0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none accent-emerald-400 cursor-pointer">
-                <p class="text-[10px] text-slate-500">Naikkan kontras (misal: 1.5x) untuk mempertajam tepi dan mengikis sisa warna background.</p>
-            </div>
-
-            <hr class="border-slate-800">
-
+            <h2 class="text-xs font-black tracking-widest text-slate-400 uppercase">Kontrol Output</h2>
             <div class="space-y-3">
-                <button id="btn-download" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-slate-900 font-black py-3 px-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer text-sm tracking-wider">
+                <button id="btn-download" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-900 font-black py-3 rounded-xl shadow-lg flex items-center justify-center text-sm tracking-wider cursor-pointer">
                     DOWNLOAD PNG
                 </button>
-                <button id="btn-reset" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 font-bold py-2.5 px-4 rounded-xl transition-colors text-xs cursor-pointer tracking-wide">
+                <button id="btn-reset" class="w-full bg-slate-800 text-slate-300 font-bold py-2.5 rounded-xl text-xs cursor-pointer">
                     GANTI FOTO BARU
                 </button>
             </div>
@@ -105,121 +73,100 @@
         }
     </style>
 
-    <script>
+    <script type="module">
+        import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
+
+        // Paksa library membaca konfigurasi model custom eksternal
+        env.allowLocalModels = false;
+
+        const statusLabel = document.getElementById('engine-status');
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('file-input');
         const loading = document.getElementById('loading');
         const previewContainer = document.getElementById('preview-container');
         const imgOriginal = document.getElementById('img-original');
-        const canvasProses = document.getElementById('canvas-proses');
         const canvasOut = document.getElementById('canvas-output');
-        
-        const rangeFeather = document.getElementById('range-feather');
-        const valFeather = document.getElementById('val-feather');
-        const rangeContrast = document.getElementById('range-contrast');
-        const valContrast = document.getElementById('val-contrast');
         const sidebar = document.getElementById('sidebar-controls');
         const btnDownload = document.getElementById('btn-download');
         const btnReset = document.getElementById('btn-reset');
 
-        let selfieSegmentation;
-        let dataMentahAI = null;
+        let removerPipe;
 
-        // Load Model super cepat via JSDelivr CDN yang anti-blokir
-        try {
-            selfieSegmentation = new SelfieSegmentation({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
-            });
-            selfieSegmentation.setOptions({ modelSelection: 1 }); // Model General (Sangat cocok untuk pas foto)
-            selfieSegmentation.onResults(terimaHasilAI);
-        } catch (e) {
-            alert("Gagal memuat AI Engine.");
+        // Trik Direct Download link dari ID Google Drive kamu bro!
+        const DRIVE_MODEL_URL = 'https://docs.google.com/uc?export=download&id=1nvKkTMKirzg9mcScSFaSi-v3jvNk135U';
+
+        async function initDriveAI() {
+            try {
+                // Kita bypass loading standar dengan mendaftarkan file ONNX langsung dari Google Drive kamu
+                removerPipe = await pipeline('image-segmentation', 'Xenova/RMBG-1.4', {
+                    model_file_name: DRIVE_MODEL_URL
+                });
+                
+                statusLabel.innerText = "DRIVE AI ACTIVE (GPU)";
+                statusLabel.className = "text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono px-2.5 py-1 rounded-full uppercase tracking-widest animate-none";
+                console.log("Mesin AI sukses ditarik dari Google Drive!");
+            } catch (err) {
+                statusLabel.innerText = "FALLBACK TO CDN ACTIVE";
+                // Jika request ke drive keblokir CORS browser, dia otomatis ambil jalur cadangan super cepat Xenova CDN
+                removerPipe = await pipeline('image-segmentation', 'Xenova/RMBG-1.4');
+                statusLabel.innerText = "CDN AI ACTIVE (GPU)";
+                statusLabel.className = "text-[10px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono px-2.5 py-1 rounded-full uppercase tracking-widest animate-none";
+            }
         }
+        initDriveAI();
 
-        fileInput.addEventListener('change', (e) => { 
-            if (e.target.files.length > 0) prosesBerkasFoto(e.target.files[0]); 
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) eksekusiPotongAI(e.target.files[0]);
         });
 
-        function prosesBerkasFoto(file) {
+        async function eksekusiPotongAI(file) {
+            if (!removerPipe) {
+                alert("AI sedang mengunduh otaknya dari Drive ke cache browser kamu, tunggu beberapa detik ya bro (proses ini cuma sekali di awal).");
+                return;
+            }
+
             dropzone.classList.add('hidden');
             loading.classList.remove('hidden');
 
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = async function() {
-                    imgOriginal.src = event.target.result;
-                    
-                    canvasProses.width = img.width;
-                    canvasProses.height = img.height;
-                    canvasOut.width = img.width;
-                    canvasOut.height = img.height;
-                    
-                    // Eksekusi pengenalan objek
-                    await selfieSegmentation.send({ image: img });
+            const urlGambar = URL.createObjectURL(file);
+            imgOriginal.src = urlGambar;
+
+            try {
+                // Eksekusi potong background tingkat tinggi
+                const output = await removerPipe(urlGambar);
+                
+                const imgHasil = new Image();
+                imgHasil.onload = function() {
+                    canvasOut.width = imgHasil.width;
+                    canvasOut.height = imgHasil.height;
+                    const ctx = canvasOut.getContext('2d');
+                    ctx.drawImage(imgHasil, 0, 0);
+
+                    loading.classList.add('hidden');
+                    previewContainer.classList.remove('hidden');
+                    sidebar.classList.remove('opacity-30', 'pointer-events-none');
                 }
-                img.src = event.target.result;
+                imgHasil.src = output.data;
+            } catch (error) {
+                alert("Terjadi masalah saat memotong gambar.");
+                console.error(error);
+                btnReset.click();
             }
-            reader.readAsDataURL(file);
         }
-
-        function terimaHasilAI(results) {
-            dataMentahAI = results;
-            loading.classList.add('hidden');
-            previewContainer.classList.remove('hidden');
-            sidebar.classList.remove('opacity-30', 'pointer-events-none');
-            renderHasilPotongan();
-        }
-
-        function renderHasilPotongan() {
-            if (!dataMentahAI) return;
-
-            const ctxP = canvasProses.getContext('2d');
-            const ctxO = canvasOut.getContext('2d');
-            const w = canvasOut.width;
-            const h = canvasOut.height;
-
-            ctxP.clearRect(0, 0, w, h);
-            ctxP.drawImage(dataMentahAI.segmentationMask, 0, 0, w, h);
-
-            ctxO.clearRect(0, 0, w, h);
-
-            const feather = parseInt(rangeFeather.value);
-            const contrast = parseFloat(rangeContrast.value);
-
-            // Terapkan filter penghalus tepi
-            if (feather > 0) {
-                ctxO.filter = `blur(${feather}px) contrast(${contrast})`;
-            } else if (contrast !== 1) {
-                ctxO.filter = `contrast(${contrast})`;
-            }
-
-            ctxO.drawImage(canvasProses, 0, 0);
-            ctxO.filter = 'none';
-
-            // Ambil bagian dalam objek foto asli
-            ctxO.globalCompositeOperation = 'source-in';
-            ctxO.drawImage(dataMentahAI.image, 0, 0, w, h);
-            ctxO.globalCompositeOperation = 'source-over';
-        }
-
-        // Slider listener
-        rangeFeather.addEventListener('input', (e) => { valFeather.innerText = e.target.value + "px"; renderHasilPotongan(); });
-        rangeContrast.addEventListener('input', (e) => { valContrast.innerText = e.target.value + "x"; renderHasilPotongan(); });
 
         btnDownload.addEventListener('click', () => {
             const link = document.createElement('a');
-            link.download = 'rembg_pro_' + Date.now() + '.png';
+            link.download = 'gdrive_ai_clean_' + Date.now() + '.png';
             link.href = canvasOut.toDataURL('image/png');
             link.click();
         });
 
         btnReset.addEventListener('click', () => {
             fileInput.value = "";
-            sidebar.classList.add('opacity-30', 'pointer-events-none');
             previewContainer.classList.add('hidden');
+            sidebar.classList.add('opacity-30', 'pointer-events-none');
             dropzone.classList.remove('hidden');
-            dataMentahAI = null;
+            loading.classList.add('hidden');
         });
     </script>
 </body>
