@@ -3,88 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Background Remover Pro - Cloud Server</title>
+    <title>AI Background Remover Pro - Optimized</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@gradio/client@1.4.0/dist/index.min.js"></script>
 </head>
 <body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col font-sans antialiased">
 
-    <header class="border-b border-slate-800 bg-[#111827]/60 backdrop-blur-md px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <h1 class="text-xl font-extrabold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent uppercase">AI Background Remover Pro</h1>
-            <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-1 rounded-full">CLOUD SERVER ACTIVE</span>
+    <header class="border-b border-slate-800 bg-[#111827]/60 p-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent uppercase tracking-widest">AI Background Remover Pro</h1>
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div class="lg:col-span-3 space-y-6">
-            <div id="dropzone" class="border-2 border-dashed border-slate-700 bg-[#111827]/30 rounded-2xl p-12 flex flex-col items-center justify-center min-h-[400px] cursor-pointer hover:border-emerald-400 transition-all relative">
-                <input type="file" id="file-input" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                <div class="text-emerald-400 mb-4">
-                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                </div>
-                <p class="text-xl font-bold">Klik atau seret foto ke sini</p>
-            </div>
-
-            <div id="loading" class="hidden border border-slate-800 bg-[#111827]/40 rounded-2xl p-12 flex flex-col items-center justify-center min-h-[400px]">
-                <div class="w-16 h-16 rounded-full border-4 border-emerald-400 border-t-transparent animate-spin mb-4"></div>
-                <p class="text-lg font-bold text-emerald-400 animate-pulse">Server sedang memotong gambar...</p>
-            </div>
-
-            <div id="preview-container" class="hidden grid md:grid-cols-2 gap-6">
-                <div class="bg-[#111827]/40 border border-slate-800 rounded-2xl p-4">
-                    <p class="text-xs text-slate-400 mb-2">FOTO ASLI</p>
-                    <img id="img-original" class="rounded-lg w-full">
-                </div>
-                <div class="bg-[#111827]/40 border border-slate-800 rounded-2xl p-4 relative checkerboard">
-                    <p class="text-xs text-emerald-400 mb-2">HASIL SERVER</p>
-                    <img id="img-output" class="rounded-lg w-full">
-                </div>
-            </div>
+    <main class="flex-1 max-w-4xl w-full mx-auto p-6 space-y-6">
+        <div id="dropzone" class="border-2 border-dashed border-slate-700 bg-[#111827]/30 rounded-2xl p-10 flex flex-col items-center justify-center cursor-pointer hover:border-emerald-400 transition-all">
+            <input type="file" id="file-input" accept="image/*" class="hidden">
+            <p class="text-emerald-400 font-bold">KLIK UNTUK UPLOAD FOTO</p>
         </div>
 
-        <div id="sidebar-controls" class="bg-[#111827]/50 border border-slate-800 rounded-2xl p-6 space-y-4 opacity-30 pointer-events-none sticky top-6">
-            <button id="btn-download" class="w-full bg-emerald-500 text-slate-900 font-bold py-3 rounded-xl">DOWNLOAD PNG</button>
-            <button id="btn-reset" class="w-full bg-slate-800 text-slate-300 font-bold py-3 rounded-xl">RESET</button>
+        <div id="loading" class="hidden border border-slate-800 bg-[#111827]/40 rounded-2xl p-10 text-center">
+            <div class="w-12 h-12 border-4 border-emerald-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-emerald-400 font-mono animate-pulse">Memotong background di cloud...</p>
+        </div>
+
+        <div id="preview-container" class="hidden grid grid-cols-2 gap-4">
+            <div class="border border-slate-800 rounded-xl p-2"><img id="img-original" class="rounded-lg"></div>
+            <div class="border border-slate-800 rounded-xl p-2 bg-slate-900"><img id="img-output" class="rounded-lg"></div>
+        </div>
+
+        <div id="controls" class="hidden flex gap-4">
+            <button id="btn-download" class="flex-1 bg-emerald-500 text-slate-900 font-bold py-3 rounded-xl">DOWNLOAD</button>
+            <button id="btn-reset" class="flex-1 bg-slate-800 text-white font-bold py-3 rounded-xl">RESET</button>
         </div>
     </main>
-
-    <style> .checkerboard { background-image: radial-gradient(#2d3748 1px, transparent 1px); background-size: 20px 20px; } </style>
 
     <script type="module">
         import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@1.4.0/dist/index.min.js";
         
         const HUGGINGFACE_SPACE_ID = "Richard990/hapus-background-ai"; 
+        
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('file-input');
         const loading = document.getElementById('loading');
         const preview = document.getElementById('preview-container');
+        const controls = document.getElementById('controls');
         const imgOrig = document.getElementById('img-original');
         const imgOut = document.getElementById('img-output');
-        const sidebar = document.getElementById('sidebar-controls');
 
-        fileInput.addEventListener('change', async (e) => {
-            if (!e.target.files[0]) return;
+        dropzone.onclick = () => fileInput.click();
+
+        fileInput.onchange = async (e) => {
             const file = e.target.files[0];
-            
+            if (!file) return;
+
             dropzone.classList.add('hidden');
             loading.classList.remove('hidden');
             imgOrig.src = URL.createObjectURL(file);
 
-            try {
-                const client = await Client.connect(HUGGINGFACE_SPACE_ID);
-                // Menembak fungsi 'process' di app.py
-                const result = await client.predict("/process", { image: file });
-                
-                imgOut.src = result.data.url;
-                loading.classList.add('hidden');
-                preview.classList.remove('hidden');
-                sidebar.classList.remove('opacity-30', 'pointer-events-none');
-            } catch (err) {
-                alert("Server Error: Pastikan Space di Hugging Face statusnya Running (Hijau)");
-                location.reload();
-            }
-        });
+            // Optimasi: Resize gambar sebelum kirim (Max 1000px)
+            const img = new Image();
+            img.src = imgOrig.src;
+            await img.decode();
+            const canvas = document.createElement('canvas');
+            const scale = Math.min(1000 / img.width, 1000 / img.height, 1);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(async (blob) => {
+                try {
+                    const client = await Client.connect(HUGGINGFACE_SPACE_ID);
+                    const result = await client.predict("/process", { image: blob });
+                    imgOut.src = result.data.url;
+                    loading.classList.add('hidden');
+                    preview.classList.remove('hidden');
+                    controls.classList.remove('hidden');
+                } catch (err) {
+                    alert("Error: Pastikan server di Hugging Face sudah Running (Hijau).");
+                    location.reload();
+                }
+            }, 'image/png');
+        };
 
         document.getElementById('btn-download').onclick = () => {
             const a = document.createElement('a');
