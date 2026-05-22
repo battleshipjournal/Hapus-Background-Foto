@@ -2,46 +2,45 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>AI Remover - Drive Edition</title>
-    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+    <title>AI Remover - Final Edition</title>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1"></script>
 </head>
-<body class="bg-gray-900 text-white p-10">
-    <div class="max-w-md mx-auto">
-        <h1 class="text-center font-bold text-xl mb-5">AI Remover (Drive Edition)</h1>
-        <div id="progress">0%</div>
-        <input type="file" id="file-input" accept="image/*">
-        <img id="output" class="mt-5 w-full hidden">
-    </div>
+<body style="font-family: sans-serif; background: #111; color: white; text-align: center; padding: 20px;">
+    <h1>AI Background Remover</h1>
+    <p id="status">Lagi loading modul AI (tunggu sebentar)...</p>
+    
+    <input type="file" id="upload" accept="image/*">
+    <br><br>
+    <img id="hasil" style="max-width: 300px; display: none;">
 
-    <script>
-        const MODEL_URL = "https://docs.google.com/uc?export=download&id=1nvKkTMKirzg9mcScSFaSi-v3jvNk135U";
-        const progress = document.getElementById('progress');
+    <script type="module">
+        import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
+        
+        // MENGHINDARI DOWNLOAD BERULANG
+        env.allowLocalModels = true;
+        env.useBrowserCache = true;
 
-        async function loadModel() {
-            // Kita download manual biar bisa dipantau
-            const response = await fetch(MODEL_URL);
-            const reader = response.body.getReader();
-            const contentLength = +response.headers.get('Content-Length');
-            
-            let receivedLength = 0;
-            let chunks = [];
-            while(true) {
-                const {done, value} = await reader.read();
-                if (done) break;
-                chunks.push(value);
-                receivedLength += value.length;
-                progress.innerText = `Download: ${Math.round(receivedLength/contentLength*100)}%`;
+        const status = document.getElementById('status');
+        
+        async function run() {
+            try {
+                status.innerText = "Modul AI sedang disiapkan (ini cuma sekali kok)...";
+                const remover = await pipeline('image-segmentation', 'Xenova/RMBG-1.4');
+                status.innerText = "AI sudah siap! Silakan pilih foto.";
+                
+                document.getElementById('upload').onchange = async (e) => {
+                    status.innerText = "Sedang proses...";
+                    const url = URL.createObjectURL(e.target.files[0]);
+                    const output = await remover(url);
+                    document.getElementById('hasil').src = output.data;
+                    document.getElementById('hasil').style.display = 'block';
+                    status.innerText = "Selesai!";
+                };
+            } catch (err) {
+                status.innerText = "Error: " + err.message + ". Coba pakai koneksi lain (Hotspot HP).";
             }
-            
-            const blob = new Blob(chunks);
-            const arrayBuffer = await blob.arrayBuffer();
-            
-            // Inisialisasi ONNX Runtime langsung dari array buffer file Drive kamu
-            const session = await ort.InferenceSession.create(arrayBuffer);
-            alert("Model siap di memori!");
         }
-
-        loadModel();
+        run();
     </script>
 </body>
 </html>
