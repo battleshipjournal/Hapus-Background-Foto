@@ -44,50 +44,46 @@
         .checkerboard { background-image: linear-gradient(45deg, #090e17 25%, transparent 25%), linear-gradient(-45deg, #090e17 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #090e17 75%), linear-gradient(-45deg, transparent 75%, #090e17 75%); background-size: 16px 16px; }
     </style>
 
-    <script>
-        const selfieSegmentation = new SelfieSegmentation({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}` });
-        selfieSegmentation.setOptions({ modelSelection: 1 });
-        
-        // Logic input file
-        document.getElementById('file-input').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if(!file) return;
-            
-            document.getElementById('dropzone').classList.add('hidden');
-            document.getElementById('loading').classList.remove('hidden');
-            
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => selfieSegmentation.send({image: img});
-                img.src = event.target.result;
-                document.getElementById('img-original').src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        });
+    // Tambahkan listener ini di dalam script
+const rangeFeather = document.getElementById('range-feather');
+const valFeather = document.getElementById('val-feather');
 
-        selfieSegmentation.onResults((results) => {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('preview-container').classList.remove('hidden');
-            document.getElementById('sidebar-controls').classList.remove('opacity-30', 'pointer-events-none');
-            
-            const canvas = document.getElementById('canvas-output');
-            const ctx = canvas.getContext('2d');
-            canvas.width = results.image.width;
-            canvas.height = results.image.height;
-            
-            ctx.drawImage(results.segmentationMask, 0, 0);
-            ctx.globalCompositeOperation = 'source-in';
-            ctx.drawImage(results.image, 0, 0);
-        });
+rangeFeather.addEventListener('input', (e) => {
+    valFeather.innerText = e.target.value + "px";
+    renderFeatheredResult();
+});
 
-        document.getElementById('btn-reset').onclick = () => location.reload();
-        document.getElementById('btn-download').onclick = () => {
-            const link = document.createElement('a');
-            link.download = 'hasil.png';
-            link.href = document.getElementById('canvas-output').toDataURL();
-            link.click();
-        };
-    </script>
+// Fungsi ini buat proses ulang gambar dengan efek blur
+function renderFeatheredResult() {
+    if (!lastResults) return; // Simpan hasil terakhir dari AI
+    
+    const canvas = document.getElementById('canvas-output');
+    const ctx = canvas.getContext('2d');
+    const featherValue = parseInt(rangeFeather.value);
+
+    // Bersihkan canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Gambar Masker dengan blur jika feather > 0
+    ctx.filter = featherValue > 0 ? `blur(${featherValue}px)` : 'none';
+    ctx.drawImage(lastResults.segmentationMask, 0, 0);
+    
+    // Potong gambar asli
+    ctx.globalCompositeOperation = 'source-in';
+    ctx.filter = 'none'; // Reset filter biar gambar asli gak blur
+    ctx.drawImage(lastResults.image, 0, 0);
+    ctx.globalCompositeOperation = 'source-over';
+}
+
+// Update juga bagian selfieSegmentation.onResults:
+let lastResults = null;
+selfieSegmentation.onResults((results) => {
+    lastResults = results; // Simpan datanya
+    renderFeatheredResult(); // Panggil fungsi render
+    
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('preview-container').classList.remove('hidden');
+    document.getElementById('sidebar-controls').classList.remove('opacity-30', 'pointer-events-none');
+});
 </body>
 </html>
