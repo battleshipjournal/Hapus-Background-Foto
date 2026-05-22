@@ -20,10 +20,12 @@
             
             <input type="file" id="file-input" class="hidden" accept="image/*">
             
-            <div id="dropzone" class="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-800/30 transition z-20">
-                <div class="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-4 text-3xl shadow-xl">＋</div>
-                <p class="text-gray-400">Klik di sini untuk pilih foto</p>
-            </div>
+        <div id="dropzone" class="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-800/30 transition z-20 group">
+            <input type="file" id="file-input" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30" accept="image/*">
+            
+            <div class="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-4 text-3xl pointer-events-none group-hover:scale-110 transition">＋</div>
+            <p class="pointer-events-none text-gray-400">Klik di sini untuk pilih foto</p>
+        </div>
 
             <div id="loading" class="hidden text-blue-400 animate-pulse font-bold tracking-widest z-10">MEMPROSES AI...</div>
             <canvas id="canvas-output" class="max-w-full max-h-[70vh] shadow-2xl rounded-lg hidden"></canvas>
