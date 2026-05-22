@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Background Remover Pro</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
 </head>
 <body class="bg-[#0b0f19] text-slate-100 min-h-screen">
@@ -31,12 +31,12 @@
             </div>
         </div>
 
-        <div id="sidebar-controls" class="bg-[#111827]/50 border border-slate-800 rounded-2xl p-6 space-y-6 opacity-30 pointer-events-none">
-            <label class="block text-sm">Feather: <span id="val-feather">0px</span></label>
-            <input type="range" id="range-feather" min="0" max="15" value="0" class="w-full">
+        <div id="sidebar-controls" class="bg-[#111827]/50 border border-slate-800 rounded-2xl p-6 space-y-6 opacity-30 pointer-events-none transition-opacity">
+            <label class="block text-sm">Feather (Haluskan Tepi): <span id="val-feather">0px</span></label>
+            <input type="range" id="range-feather" min="0" max="20" value="0" class="w-full accent-emerald-400">
             
-            <button id="btn-download" class="w-full bg-emerald-500 py-3 rounded-xl font-bold text-black">DOWNLOAD</button>
-            <button id="btn-reset" class="w-full bg-slate-800 py-3 rounded-xl">RESET</button>
+            <button id="btn-download" class="w-full bg-emerald-500 py-3 rounded-xl font-bold text-black hover:bg-emerald-400">DOWNLOAD PNG</button>
+            <button id="btn-reset" class="w-full bg-slate-800 py-3 rounded-xl hover:bg-slate-700">RESET</button>
         </div>
     </main>
 
@@ -44,46 +44,73 @@
         .checkerboard { background-image: linear-gradient(45deg, #090e17 25%, transparent 25%), linear-gradient(-45deg, #090e17 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #090e17 75%), linear-gradient(-45deg, transparent 75%, #090e17 75%); background-size: 16px 16px; }
     </style>
 
-    // Tambahkan listener ini di dalam script
-const rangeFeather = document.getElementById('range-feather');
-const valFeather = document.getElementById('val-feather');
+    <script>
+        const selfieSegmentation = new SelfieSegmentation({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}` });
+        selfieSegmentation.setOptions({ modelSelection: 1 });
+        
+        let lastResults = null;
 
-rangeFeather.addEventListener('input', (e) => {
-    valFeather.innerText = e.target.value + "px";
-    renderFeatheredResult();
-});
+        // Input File
+        document.getElementById('file-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            
+            document.getElementById('dropzone').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => selfieSegmentation.send({image: img});
+                img.src = event.target.result;
+                document.getElementById('img-original').src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
 
-// Fungsi ini buat proses ulang gambar dengan efek blur
-function renderFeatheredResult() {
-    if (!lastResults) return; // Simpan hasil terakhir dari AI
-    
-    const canvas = document.getElementById('canvas-output');
-    const ctx = canvas.getContext('2d');
-    const featherValue = parseInt(rangeFeather.value);
+        // AI Result Handler
+        selfieSegmentation.onResults((results) => {
+            lastResults = results;
+            renderCanvas();
+            
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('preview-container').classList.remove('hidden');
+            document.getElementById('sidebar-controls').classList.remove('opacity-30', 'pointer-events-none');
+        });
 
-    // Bersihkan canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Render & Feather Logic
+        function renderCanvas() {
+            if (!lastResults) return;
+            const canvas = document.getElementById('canvas-output');
+            const ctx = canvas.getContext('2d');
+            const feather = parseInt(document.getElementById('range-feather').value);
+            
+            canvas.width = lastResults.image.width;
+            canvas.height = lastResults.image.height;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.filter = feather > 0 ? `blur(${feather}px)` : 'none';
+            ctx.drawImage(lastResults.segmentationMask, 0, 0);
+            
+            ctx.globalCompositeOperation = 'source-in';
+            ctx.filter = 'none';
+            ctx.drawImage(lastResults.image, 0, 0);
+            ctx.globalCompositeOperation = 'source-over';
+        }
 
-    // Gambar Masker dengan blur jika feather > 0
-    ctx.filter = featherValue > 0 ? `blur(${featherValue}px)` : 'none';
-    ctx.drawImage(lastResults.segmentationMask, 0, 0);
-    
-    // Potong gambar asli
-    ctx.globalCompositeOperation = 'source-in';
-    ctx.filter = 'none'; // Reset filter biar gambar asli gak blur
-    ctx.drawImage(lastResults.image, 0, 0);
-    ctx.globalCompositeOperation = 'source-over';
-}
+        // Listeners
+        document.getElementById('range-feather').addEventListener('input', (e) => {
+            document.getElementById('val-feather').innerText = e.target.value + "px";
+            renderCanvas();
+        });
 
-// Update juga bagian selfieSegmentation.onResults:
-let lastResults = null;
-selfieSegmentation.onResults((results) => {
-    lastResults = results; // Simpan datanya
-    renderFeatheredResult(); // Panggil fungsi render
-    
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('preview-container').classList.remove('hidden');
-    document.getElementById('sidebar-controls').classList.remove('opacity-30', 'pointer-events-none');
-});
+        document.getElementById('btn-reset').onclick = () => location.reload();
+        document.getElementById('btn-download').onclick = () => {
+            const link = document.createElement('a');
+            link.download = 'hasil-edit.png';
+            link.href = document.getElementById('canvas-output').toDataURL();
+            link.click();
+        };
+    </script>
 </body>
 </html>
