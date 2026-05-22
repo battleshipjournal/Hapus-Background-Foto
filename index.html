@@ -2,84 +2,59 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Background Remover - Pro</title>
+    <title>AI Background Remover</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body class="bg-[#0b0f19] text-white min-h-screen p-6 font-sans">
-
-    <div class="max-w-xl mx-auto space-y-6">
-        <h1 class="text-2xl font-bold text-center bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">AI Background Remover</h1>
-
-        <div id="download-box" class="bg-[#111827] border border-slate-800 p-6 rounded-2xl hidden">
-            <p id="status-text" class="text-sm text-emerald-400 mb-3 font-mono">Memulai download model AI (43MB)...</p>
-            <div class="w-full bg-slate-800 rounded-full h-3">
-                <div id="progress-bar" class="bg-emerald-500 h-3 rounded-full w-0 transition-all duration-300"></div>
-            </div>
+<body class="bg-gray-900 text-white p-5">
+    <div class="max-w-md mx-auto text-center">
+        <h1 class="text-xl font-bold mb-4">AI Background Remover</h1>
+        
+        <div id="progress-wrapper" class="hidden">
+            <p id="progress-text" class="text-xs text-yellow-500">Mempersiapkan AI (Download 43MB sekali saja)...</p>
+            <div class="w-full bg-gray-700 h-2 mt-2 rounded"><div id="progress-bar" class="h-full bg-green-500 w-0"></div></div>
         </div>
 
-        <div id="upload-box" class="border-2 border-dashed border-slate-700 p-12 rounded-2xl text-center cursor-pointer hover:border-emerald-500 transition-colors">
-            <input type="file" id="file-input" class="hidden">
-            <p>Klik untuk pilih foto</p>
-        </div>
-
-        <div id="preview-box" class="hidden space-y-4">
-            <img id="output-img" class="rounded-xl w-full">
-            <button id="btn-reset" class="w-full py-3 bg-slate-800 rounded-xl">Ganti Foto</button>
-        </div>
+        <input type="file" id="file-input" class="hidden" accept="image/*">
+        <button id="btn-upload" class="bg-blue-600 px-6 py-2 rounded-lg mt-4 w-full">Pilih Foto</button>
+        <img id="output" class="mt-4 w-full rounded-lg hidden">
     </div>
 
     <script type="module">
         import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
-        
-        // Agar AI tersimpan di cache browser dan gak download ulang
-        env.allowLocalModels = true; 
+        env.allowLocalModels = true; // Paksa simpan di browser user
 
-        const downloadBox = document.getElementById('download-box');
+        const progressWrapper = document.getElementById('progress-wrapper');
         const progressBar = document.getElementById('progress-bar');
-        const statusText = document.getElementById('status-text');
-        const uploadBox = document.getElementById('upload-box');
-
+        const statusText = document.getElementById('progress-text');
+        
         let remover;
 
-        async function initAI() {
-            downloadBox.classList.remove('hidden');
-            uploadBox.classList.add('hidden');
-
-            try {
-                remover = await pipeline('image-segmentation', 'Xenova/RMBG-1.4', {
-                    progress_callback: (p) => {
-                        const percent = Math.round(p.progress || 0);
-                        progressBar.style.width = percent + '%';
-                        statusText.innerText = `Mengunduh otak AI: ${percent}%...`;
-                    }
-                });
-                
-                downloadBox.classList.add('hidden');
-                uploadBox.classList.remove('hidden');
-            } catch (err) {
-                statusText.innerText = "Error: Cek koneksi internetmu!";
-            }
+        // Inisialisasi AI (Download ke IndexedDB browser)
+        async function loadAI() {
+            progressWrapper.classList.remove('hidden');
+            remover = await pipeline('image-segmentation', 'Xenova/RMBG-1.4', {
+                progress_callback: (p) => {
+                    const prog = Math.round(p.progress || 0);
+                    progressBar.style.width = prog + '%';
+                    statusText.innerText = `Download: ${prog}%`;
+                }
+            });
+            progressWrapper.classList.add('hidden');
+            statusText.innerText = "AI Siap!";
         }
+        loadAI();
 
-        initAI();
-
-        // Proses Potong
+        document.getElementById('btn-upload').onclick = () => document.getElementById('file-input').click();
         document.getElementById('file-input').onchange = async (e) => {
-            const file = e.target.files[0];
-            const url = URL.createObjectURL(file);
+            const url = URL.createObjectURL(e.target.files[0]);
+            statusText.innerText = "Memotong background...";
+            progressWrapper.classList.remove('hidden');
             
-            uploadBox.classList.add('hidden');
-            statusText.innerText = "Sedang memotong... (tunggu sebentar)";
-            downloadBox.classList.remove('hidden');
-
             const result = await remover(url);
-            document.getElementById('output-img').src = result.data;
-            document.getElementById('preview-box').classList.remove('hidden');
-            downloadBox.classList.add('hidden');
+            document.getElementById('output').src = result.data;
+            document.getElementById('output').classList.remove('hidden');
+            progressWrapper.classList.add('hidden');
         };
-
-        uploadBox.onclick = () => document.getElementById('file-input').click();
     </script>
 </body>
 </html>
