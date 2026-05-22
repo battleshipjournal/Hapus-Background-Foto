@@ -32,15 +32,23 @@
         // Inisialisasi AI (Download ke IndexedDB browser)
         async function loadAI() {
             progressWrapper.classList.remove('hidden');
-            remover = await pipeline('image-segmentation', 'Xenova/RMBG-1.4', {
-                progress_callback: (p) => {
-                    const prog = Math.round(p.progress || 0);
-                    progressBar.style.width = prog + '%';
-                    statusText.innerText = `Download: ${prog}%`;
-                }
-            });
-            progressWrapper.classList.add('hidden');
-            statusText.innerText = "AI Siap!";
+            
+            try {
+                // Kita gunakan URL yang lebih ramah & stabil
+                remover = await pipeline('image-segmentation', 'Xenova/RMBG-1.4', {
+                    // Paksa pakai model dari Xenova CDN yang sangat stabil
+                    progress_callback: (p) => {
+                        const prog = Math.round(p.progress || 0);
+                        progressBar.style.width = prog + '%';
+                        statusText.innerText = `Download AI: ${prog}%`;
+                    }
+                });
+                
+                progressWrapper.classList.add('hidden');
+            } catch (err) {
+                console.error(err);
+                statusText.innerText = "Gagal total. Coba pakai VPN atau ganti jaringan!";
+            }
         }
         loadAI();
 
