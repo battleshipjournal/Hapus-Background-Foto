@@ -61,18 +61,57 @@
         }
         initAI();
 
-        document.getElementById('file-input').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            const img = new Image();
-            img.src = URL.createObjectURL(file);
-            await img.decode();
-            activeImg = img;
+document.getElementById('file-input').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 1. Tampilkan indikator loading dan sembunyikan dropzone
+    document.getElementById('dropzone').classList.add('hidden');
+    document.getElementById('loading').classList.remove('hidden');
+
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    
+    // TUNGGU SAMPAI GAMBAR BENER-BENER KEMUAT (Ini kuncinya!)
+    img.onload = async () => {
+        activeImg = img;
+        
+        // 2. Set ukuran canvas sesuai foto biar gak melar/gepeng
+        canvasOut.width = img.width;
+        canvasOut.height = img.height;
+        
+        // 3. TAMPILKAN FOTO DI CANVAS SEKARANG JUGA (Preview Instan)
+        const ctx = canvasOut.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        canvasOut.classList.remove('hidden'); 
+        document.getElementById('preview-container').classList.remove('hidden');
+
+        // 4. Baru deh AI mulai kerja di background
+        try {
+            const results = segmenter.segment(img);
+            const mask = results.confidenceMasks[15].getAsFloat32Array();
             
-            document.getElementById('dropzone').classList.add('hidden');
-            canvasOut.classList.remove('hidden');
+            // 5. Update canvas dengan hasil potongannya
+            applyMaskToCanvas(img, mask);
             
-            processImage();
-        });
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('sidebar-controls').classList.remove('opacity-30', 'pointer-events-none');
+        } catch (err) {
+            console.error("AI Error:", err);
+            alert("AI gagal memproses foto, coba foto lain bro!");
+        }
+    };
+});
+
+// Fungsi terpisah biar kodingan rapi
+function applyMaskToCanvas(img, mask) {
+    const ctx = canvasOut.getContext('2d');
+    const imgData = ctx.getImageData(0, 0, img.width, img.height);
+    for (let i = 0; i < mask.length; i++) {
+        imgData.data[i * 4 + 3] = mask[i] * 255;
+    }
+    ctx.putImageData(imgData, 0, 0);
+}
 
         function processImage() {
             if (!activeImg) return;
