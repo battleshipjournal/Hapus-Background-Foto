@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Background Remover Pro (Premium Fix)</title>
+    <title>AI Background Remover Pro - Fix Version</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     
@@ -14,10 +14,10 @@
     <header class="border-b border-slate-800 bg-[#111827]/60 backdrop-blur-md px-6 py-4 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
             <div>
-                <h1 class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent uppercase">AI Background Remover Pro (Premium Fix)</h1>
-                <p class="text-xs text-slate-400 mt-0.5">DeepLabv3 High-Precision Model + Edge Smoothing</p>
+                <h1 class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent uppercase">AI Background Remover Pro</h1>
+                <p class="text-xs text-slate-400 mt-0.5">DeepLabv3 Engine + High-Precision Edge Smoother</p>
             </div>
-            <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono px-2.5 py-1 rounded-full uppercase tracking-widest animate-pulse">Live Server Active</span>
+            <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono px-2.5 py-1 rounded-full uppercase tracking-widest animate-pulse">Engine Ready</span>
         </div>
     </header>
 
@@ -76,11 +76,11 @@
 
             <div class="space-y-2">
                 <div class="flex justify-between text-xs font-bold">
-                    <label for="range-threshold" class="text-slate-300">Threshold Tepi (Kikis Warna Luar)</label>
-                    <span id="val-threshold" class="text-emerald-400 font-mono">0.50</span>
+                    <label for="range-threshold" class="text-slate-300">Threshold Tepi (Kikis Merah)</label>
+                    <span id="val-threshold" class="text-emerald-400 font-mono">0.55</span>
                 </div>
                 <input type="range" id="range-threshold" min="0.1" max="0.9" step="0.05" value="0.55" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none accent-emerald-400 cursor-pointer">
-                <p class="text-[10px] text-slate-500">Geser ke kanan sedikit (ke 0.55 atau 0.60) untuk mengikis sisa warna merah latar belakang.</p>
+                <p class="text-[10px] text-slate-500">Geser ke kanan sedikit (0.55 - 0.65) untuk mengikis sisa warna merah di tepi hijab.</p>
             </div>
 
             <hr class="border-slate-800">
@@ -104,9 +104,7 @@
         }
     </style>
 
-    <script type="module">
-        import { FilesetResolver, ImageSegmenter } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8/vision_bundle.js";
-
+    <script>
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('file-input');
         const loading = document.getElementById('loading');
@@ -126,12 +124,13 @@
         let aiMaskBuffer = null; 
         let gambarAktif = null;
 
+        // Panggil objek MediaPipe dari scope global windows library
         async function initAI() {
             try {
-                const vision = await FilesetResolver.forVisionTasks(
+                const vision = await mpTasksVision.FilesetResolver.forVisionTasks(
                     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8/wasm"
                 );
-                imageSegmenter = await ImageSegmenter.createFromOptions(vision, {
+                imageSegmenter = await mpTasksVision.ImageSegmenter.createFromOptions(vision, {
                     baseOptions: {
                         modelAssetPath: "https://storage.googleapis.com/mediapipe-models/image_segmenter/deeplabv3/float32/1/default/1.tflite",
                         delegate: "GPU"
@@ -140,17 +139,17 @@
                     outputCategoryMask: true,
                     outputConfidenceMasks: true
                 });
-                console.log("AI Engine Aktif & Siap!");
+                console.log("AI Engine Ready via Global Scope!");
             } catch (err) {
-                alert("Gagal mengunduh struktur AI Engine. Pastikan internet menyala.");
                 console.error(err);
             }
         }
         initAI();
 
-        window.prosesBerkasFoto = function(file) {
+        // Fungsi pemroses file utama (Normal & Universal)
+        function prosesBerkasFoto(file) {
             if (!imageSegmenter) { 
-                alert("AI Engine sedang memuat model DeepLabv3 ke GPU, tunggu sekitar 5 detik ya bro."); 
+                alert("Model AI sedang diunduh secara aman di latar belakang, mohon tunggu 5 detik lagi ya bro."); 
                 return; 
             }
             dropzone.classList.add('hidden');
@@ -166,9 +165,9 @@
                     canvasOut.width = img.width;
                     canvasOut.height = img.height;
 
-                    // Jalankan kalkulasi AI
+                    // Jalankan deteksi objek AI
                     const hasilSg = imageSegmenter.segment(img);
-                    aiMaskBuffer = hasilSg.confidenceMasks[15]; // Index 15 = Manusia (Person)
+                    aiMaskBuffer = hasilSg.confidenceMasks[15]; // Index Manusia
                     
                     loading.classList.add('hidden');
                     previewContainer.classList.remove('hidden');
@@ -181,9 +180,19 @@
             reader.readAsDataURL(file);
         }
 
+        // Jalankan perintah setiap kali ada file masuk lewat klik/seret
         fileInput.addEventListener('change', (e) => { 
             if (e.target.files.length > 0) {
-                window.prosesBerkasFoto(e.target.files[0]); 
+                prosesBerkasFoto(e.target.files[0]); 
+            }
+        });
+
+        // Dukungan fitur seret langsung (Drag and drop) manual cadangan
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); });
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (e.dataTransfer.files.length > 0) {
+                prosesBerkasFoto(e.dataTransfer.files[0]);
             }
         });
 
