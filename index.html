@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Background Remover Pro - MediaPipe Fast</title>
+    <title>AI Background Remover Pro (Premium Fix)</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8/vision_bundle.js" crossorigin="anonymous"></script>
 </head>
 <body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col justify-between font-sans antialiased">
 
     <header class="border-b border-slate-800 bg-[#111827]/60 backdrop-blur-md px-6 py-4 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
             <div>
-                <h1 class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent uppercase">AI Background Remover Pro</h1>
-                <p class="text-xs text-slate-400 mt-0.5">MediaPipe Engine + High-Speed Pixel Masking</p>
+                <h1 class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent uppercase">AI Background Remover Pro (Premium Fix)</h1>
+                <p class="text-xs text-slate-400 mt-0.5">DeepLabv3 High-Precision Model + Edge Smoothing</p>
             </div>
             <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono px-2.5 py-1 rounded-full uppercase tracking-widest animate-pulse">Live Server Active</span>
         </div>
@@ -31,7 +31,7 @@
                     <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 </div>
                 <p class="text-xl font-bold text-slate-200 pointer-events-none">Klik di sini atau seret foto kamu</p>
-                <p class="text-xs text-slate-400 mt-2 pointer-events-none">Mendukung semua format foto • Super Ringan & Cepat</p>
+                <p class="text-xs text-slate-400 mt-2 pointer-events-none">Mendukung format JPG, PNG, WebP (Potongan Halus Tingkat Piksel)</p>
             </div>
 
             <div id="loading" class="hidden border border-slate-800/60 bg-[#111827]/40 rounded-2xl p-12 flex flex-col items-center justify-center min-h-[450px]">
@@ -39,8 +39,8 @@
                     <div class="absolute inset-0 rounded-full border-4 border-emerald-500/10"></div>
                     <div class="absolute inset-0 rounded-full border-4 border-emerald-400 border-t-transparent animate-spin"></div>
                 </div>
-                <p class="text-lg font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent animate-pulse">Memisahkan Latar Belakang...</p>
-                <p class="text-xs text-slate-400 mt-2 max-w-xs text-center">AI sedang mengekstrak objek gambar kamu secara instan.</p>
+                <p class="text-lg font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent animate-pulse">Menjalankan Deep Learning Model...</p>
+                <p class="text-xs text-slate-400 mt-2 max-w-xs text-center">AI sedang memindai piksel tepi dan memisahkan objek dari latar belakang secara presisi.</p>
             </div>
 
             <div id="preview-container" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -51,8 +51,7 @@
                     </div>
                 </div>
                 <div class="bg-[#111827]/40 border border-slate-800 rounded-2xl p-4 flex flex-col shadow-2xl">
-                    <span class="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span> Hasil Transparan</span>
-                    <canvas id="canvas-proses" class="hidden"></canvas>
+                    <span class="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span> Hasil Ultra Clean</span>
                     <div class="flex-1 min-h-[350px] max-h-[500px] bg-[#090d16] rounded-xl flex items-center justify-center p-2 overflow-hidden relative checkerboard">
                         <canvas id="canvas-output" class="max-w-full max-h-full object-contain"></canvas>
                     </div>
@@ -63,7 +62,7 @@
         <div id="sidebar-controls" class="bg-[#111827]/50 border border-slate-800 rounded-2xl p-6 space-y-6 opacity-30 pointer-events-none transition-all duration-300 shadow-2xl sticky top-24">
             <div class="flex items-center justify-between">
                 <h2 class="text-xs font-black tracking-widest text-slate-400 uppercase">Refine Edge Engine</h2>
-                <span class="text-[10px] bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded font-mono">Realtime</span>
+                <span class="text-[10px] bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded font-mono">Piksel-Level</span>
             </div>
             
             <div class="space-y-2">
@@ -71,24 +70,24 @@
                     <label for="range-feather" class="text-slate-300">Feather (Kelembutan Tepi)</label>
                     <span id="val-feather" class="text-emerald-400 font-mono">0px</span>
                 </div>
-                <input type="range" id="range-feather" min="0" max="15" value="0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none accent-emerald-400 cursor-pointer">
-                <p class="text-[10px] text-slate-500">Menghaluskan pinggiran potongan gambar agar tidak kaku.</p>
+                <input type="range" id="range-feather" min="0" max="10" step="0.5" value="0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none accent-emerald-400 cursor-pointer">
+                <p class="text-[10px] text-slate-500">Menghilangkan efek kaku/gerigi di area helai kerudung atau baju.</p>
             </div>
 
             <div class="space-y-2">
                 <div class="flex justify-between text-xs font-bold">
-                    <label for="range-contrast" class="text-slate-300">Contrast Tepi</label>
-                    <span id="val-contrast" class="text-emerald-400 font-mono">1.0x</span>
+                    <label for="range-threshold" class="text-slate-300">Threshold Tepi (Kikis Warna Luar)</label>
+                    <span id="val-threshold" class="text-emerald-400 font-mono">0.50</span>
                 </div>
-                <input type="range" id="range-contrast" min="0.5" max="3.0" step="0.1" value="1.0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none accent-emerald-400 cursor-pointer">
-                <p class="text-[10px] text-slate-500">Mempertajam kembali area tepi objek setelah di-blur.</p>
+                <input type="range" id="range-threshold" min="0.1" max="0.9" step="0.05" value="0.55" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none accent-emerald-400 cursor-pointer">
+                <p class="text-[10px] text-slate-500">Geser ke kanan sedikit (ke 0.55 atau 0.60) untuk mengikis sisa warna merah latar belakang.</p>
             </div>
 
             <hr class="border-slate-800">
 
             <div class="space-y-3">
                 <button id="btn-download" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-slate-900 font-black py-3 px-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer text-sm tracking-wider">
-                    DOWNLOAD PNG
+                    DOWNLOAD ULTRA PNG
                 </button>
                 <button id="btn-reset" class="w-full bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 font-bold py-2.5 px-4 rounded-xl transition-colors text-xs cursor-pointer tracking-wide">
                     GANTI FOTO BARU
@@ -105,123 +104,153 @@
         }
     </style>
 
-    <script>
+    <script type="module">
+        import { FilesetResolver, ImageSegmenter } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8/vision_bundle.js";
+
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('file-input');
         const loading = document.getElementById('loading');
         const previewContainer = document.getElementById('preview-container');
         const imgOriginal = document.getElementById('img-original');
-        const canvasProses = document.getElementById('canvas-proses');
         const canvasOut = document.getElementById('canvas-output');
         
         const rangeFeather = document.getElementById('range-feather');
         const valFeather = document.getElementById('val-feather');
-        const rangeContrast = document.getElementById('range-contrast');
-        const valContrast = document.getElementById('val-contrast');
+        const rangeThreshold = document.getElementById('range-threshold');
+        const valThreshold = document.getElementById('val-threshold');
         const sidebar = document.getElementById('sidebar-controls');
         const btnDownload = document.getElementById('btn-download');
         const btnReset = document.getElementById('btn-reset');
 
-        let selfieSegmentation;
-        let dataMentahAI = null;
+        let imageSegmenter;
+        let aiMaskBuffer = null; 
+        let gambarAktif = null;
 
-        // Inisialisasi Model Ringan & Stabil High Speed
-        try {
-            selfieSegmentation = new SelfieSegmentation({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
-            });
-            selfieSegmentation.setOptions({ modelSelection: 1 }); 
-            selfieSegmentation.onResults(terimaHasilAI);
-        } catch (e) {
-            alert("Gagal memuat AI Engine. Periksa jaringan internet kamu.");
+        async function initAI() {
+            try {
+                const vision = await FilesetResolver.forVisionTasks(
+                    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8/wasm"
+                );
+                imageSegmenter = await ImageSegmenter.createFromOptions(vision, {
+                    baseOptions: {
+                        modelAssetPath: "https://storage.googleapis.com/mediapipe-models/image_segmenter/deeplabv3/float32/1/default/1.tflite",
+                        delegate: "GPU"
+                    },
+                    runningMode: "IMAGE",
+                    outputCategoryMask: true,
+                    outputConfidenceMasks: true
+                });
+                console.log("AI Engine Aktif & Siap!");
+            } catch (err) {
+                alert("Gagal mengunduh struktur AI Engine. Pastikan internet menyala.");
+                console.error(err);
+            }
         }
+        initAI();
 
-        // Listener Aksi Input File (Klik & Seret)
-        fileInput.addEventListener('change', (e) => { 
-            if (e.target.files.length > 0) prosesBerkasFoto(e.target.files[0]); 
-        });
-
-        function prosesBerkasFoto(file) {
+        window.prosesBerkasFoto = function(file) {
+            if (!imageSegmenter) { 
+                alert("AI Engine sedang memuat model DeepLabv3 ke GPU, tunggu sekitar 5 detik ya bro."); 
+                return; 
+            }
             dropzone.classList.add('hidden');
             loading.classList.remove('hidden');
 
             const reader = new FileReader();
             reader.onload = function(event) {
                 const img = new Image();
-                img.onload = async function() {
+                img.onload = function() {
+                    gambarAktif = img;
                     imgOriginal.src = event.target.result;
                     
-                    // Set ukuran canvas HD
-                    canvasProses.width = img.width;
-                    canvasProses.height = img.height;
                     canvasOut.width = img.width;
                     canvasOut.height = img.height;
+
+                    // Jalankan kalkulasi AI
+                    const hasilSg = imageSegmenter.segment(img);
+                    aiMaskBuffer = hasilSg.confidenceMasks[15]; // Index 15 = Manusia (Person)
                     
-                    // Kirim ke AI
-                    await selfieSegmentation.send({ image: img });
-                }
+                    loading.classList.add('hidden');
+                    previewContainer.classList.remove('hidden');
+                    sidebar.classList.remove('opacity-30', 'pointer-events-none');
+                    
+                    renderAlphaMattePro();
+                };
                 img.src = event.target.result;
-            }
+            };
             reader.readAsDataURL(file);
         }
 
-        function terimaHasilAI(results) {
-            dataMentahAI = results;
-            loading.classList.add('hidden');
-            previewContainer.classList.remove('hidden');
-            sidebar.classList.remove('opacity-30', 'pointer-events-none');
-            renderHasilPotongan();
-        }
+        fileInput.addEventListener('change', (e) => { 
+            if (e.target.files.length > 0) {
+                window.prosesBerkasFoto(e.target.files[0]); 
+            }
+        });
 
-        function renderHasilPotongan() {
-            if (!dataMentahAI) return;
+        function renderAlphaMattePro() {
+            if (!aiMaskBuffer || !gambarAktif) return;
 
-            const ctxP = canvasProses.getContext('2d');
-            const ctxO = canvasOut.getContext('2d');
+            const ctx = canvasOut.getContext('2d');
             const w = canvasOut.width;
             const h = canvasOut.height;
 
-            ctxP.clearRect(0, 0, w, h);
-            ctxP.drawImage(dataMentahAI.segmentationMask, 0, 0, w, h);
+            const canvasImg = document.createElement('canvas');
+            canvasImg.width = w;
+            canvasImg.height = h;
+            const ctxImg = canvasImg.getContext('2d');
+            ctxImg.drawImage(gambarAktif, 0, 0);
+            const imgDataObj = ctxImg.getImageData(0, 0, w, h);
+            const pikselFoto = imgDataObj.data;
 
-            ctxO.clearRect(0, 0, w, h);
+            const matriksAI = aiMaskBuffer.getAsFloat32Array();
+            const hasilGambarBaru = ctx.createImageData(w, h);
+            const pikselHasil = hasilGambarBaru.data;
 
-            const feather = parseInt(rangeFeather.value);
-            const contrast = parseFloat(rangeContrast.value);
+            const radiusFeather = parseFloat(rangeFeather.value);
+            const limitThreshold = parseFloat(rangeThreshold.value);
 
-            if (feather > 0) {
-                ctxO.filter = `blur(${feather}px) contrast(${contrast})`;
-            } else if (contrast !== 1) {
-                ctxO.filter = `contrast(${contrast})`;
+            for (let i = 0; i < matriksAI.length; i++) {
+                const idxPiksel = i * 4;
+                const bobotAILokal = matriksAI[i];
+
+                let alphaHasil = 0;
+                if (bobotAILokal >= limitThreshold) {
+                    alphaHasil = 255;
+                } else if (radiusFeather > 0 && bobotAILokal > (limitThreshold - (radiusFeather * 0.05))) {
+                    const jarakBatas = limitThreshold - bobotAILokal;
+                    const faktorKelembutan = 1.0 - (jarakBatas / (radiusFeather * 0.05));
+                    alphaHasil = Math.floor(faktorKelembutan * 255);
+                }
+
+                pikselHasil[idxPiksel] = pikselFoto[idxPiksel];         
+                pikselHasil[idxPiksel + 1] = pikselFoto[idxPiksel + 1]; 
+                pikselHasil[idxPiksel + 2] = pikselFoto[idxPiksel + 2]; 
+                pikselHasil[idxPiksel + 3] = alphaHasil;                
             }
 
-            ctxO.drawImage(canvasProses, 0, 0);
-            ctxO.filter = 'none';
-
-            ctxO.globalCompositeOperation = 'source-in';
-            ctxO.drawImage(dataMentahAI.image, 0, 0, w, h);
-            ctxO.globalCompositeOperation = 'source-over';
+            ctx.putImageData(hasilGambarBaru, 0, 0);
         }
 
-        // Slider listener
-        rangeFeather.addEventListener('input', (e) => { valFeather.innerText = e.target.value + "px"; renderHasilPotongan(); });
-        rangeContrast.addEventListener('input', (e) => { valContrast.innerText = e.target.value + "x"; renderHasilPotongan(); });
+        // Slider Event Listeners
+        rangeFeather.addEventListener('input', (e) => { valFeather.innerText = e.target.value + "px"; renderAlphaMattePro(); });
+        rangeThreshold.addEventListener('input', (e) => { valThreshold.innerText = parseFloat(e.target.value).toFixed(2); renderAlphaMattePro(); });
 
-        // Unduh Hasil
+        // Tombol Download
         btnDownload.addEventListener('click', () => {
             const link = document.createElement('a');
-            link.download = 'rembg_pro_' + Date.now() + '.png';
+            link.download = 'rembg_ultra_pro_' + Date.now() + '.png';
             link.href = canvasOut.toDataURL('image/png');
             link.click();
         });
 
-        // Reset
+        // Tombol Reset Aplikasi
         btnReset.addEventListener('click', () => {
             fileInput.value = "";
             sidebar.classList.add('opacity-30', 'pointer-events-none');
             previewContainer.classList.add('hidden');
             dropzone.classList.remove('hidden');
-            dataMentahAI = null;
+            aiMaskBuffer = null;
+            gambarAktif = null;
         });
     </script>
 </body>
